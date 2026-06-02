@@ -1,1 +1,519 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>zakisite1</title>
+  <meta name="description" content="zakisite1 - NFC Solutions" />
+  <style>
+    :root {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem;
+      --radius-sm: 0.5rem; --radius-md: 0.9rem; --radius-lg: 1.25rem; --radius-full: 9999px;
+      --bg: #08080f;
+      --surface: rgba(17, 19, 31, 0.78);
+      --surface-2: rgba(24, 26, 42, 0.92);
+      --border: rgba(145, 155, 255, 0.2);
+      --text: #f4f7ff;
+      --muted: #b3bdd9;
+      --primary: #42d9ff;
+      --secondary: #db4fff;
+      --danger: #ff5f87;
+      --success: #57f0b6;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --glow: 0 0 0 1px rgba(255,255,255,.03), 0 0 30px rgba(66,217,255,.15), 0 0 45px rgba(219,79,255,.1);
+      --font: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      font-size: var(--text-base);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(66,217,255,.2), transparent 30%),
+        radial-gradient(circle at top right, rgba(219,79,255,.22), transparent 28%),
+        radial-gradient(circle at bottom center, rgba(103,74,255,.18), transparent 30%),
+        var(--bg);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: radial-gradient(circle at center, black 55%, transparent 95%);
+      opacity: .25;
+    }
+    img { max-width: 100%; display: block; }
+    button, input, select { font: inherit; }
+
+    .app {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-4) var(--space-12);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow), var(--glow);
+      backdrop-filter: blur(14px);
+      padding: clamp(1.25rem, 3vw, 2rem);
+      display: grid;
+      gap: var(--space-5);
+      justify-items: center;
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .logo-wrap {
+      width: min(72vw, 280px);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 0 35px rgba(66,217,255,.18), 0 0 65px rgba(219,79,255,.14);
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.35);
+    }
+
+    .brand-title {
+      font-size: var(--text-xl);
+      font-weight: 800;
+      letter-spacing: .03em;
+      margin: 0;
+    }
+
+    .brand-sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+
+    .primary-btn, .action-btn {
+      border: 0;
+      border-radius: var(--radius-full);
+      min-height: 48px;
+      padding: 0.9rem 1.35rem;
+      color: #fff;
+      cursor: pointer;
+      transition: transform .18s ease, opacity .18s ease, box-shadow .18s ease;
+    }
+
+    .primary-btn {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      box-shadow: 0 10px 30px rgba(66,217,255,.23), 0 10px 30px rgba(219,79,255,.22);
+      font-weight: 800;
+      width: min(100%, 280px);
+    }
+
+    .primary-btn:hover, .action-btn:hover { transform: translateY(-1px); }
+    .primary-btn:active, .action-btn:active { transform: translateY(1px); }
+
+    .panel {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+
+    .panel.active { display: block; }
+
+    .panel-title {
+      margin: 0 0 var(--space-2);
+      font-size: var(--text-lg);
+      font-weight: 800;
+    }
+
+    .panel-desc {
+      margin: 0 0 var(--space-5);
+      color: var(--muted);
+      font-size: var(--text-sm);
+    }
+
+    .field {
+      display: grid;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .field label {
+      font-size: var(--text-sm);
+      color: var(--muted);
+    }
+
+    .input, .select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      border-radius: var(--radius-md);
+      padding: 0.95rem 1rem;
+      outline: none;
+      min-height: 50px;
+    }
+
+    .input:focus, .select:focus {
+      border-color: rgba(66,217,255,.6);
+      box-shadow: 0 0 0 4px rgba(66,217,255,.12);
+    }
+
+    .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .action-btn {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.08);
+      min-width: 120px;
+      font-weight: 700;
+    }
+
+    .action-btn.delete { background: rgba(255,95,135,.12); color: #ffd9e3; }
+    .action-btn.program { background: rgba(87,240,182,.12); color: #d9fff0; }
+    .action-btn.save { background: rgba(66,217,255,.12); color: #d9f9ff; }
+
+    .account-card {
+      display: none;
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03), var(--shadow);
+    }
+
+    .account-card.active { display: block; }
+
+    .account-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem .9rem;
+      border-radius: var(--radius-full);
+      background: rgba(66,217,255,.12);
+      color: #ccf6ff;
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-3);
+    }
+
+    .account-value {
+      font-size: clamp(1.15rem, 1rem + 1vw, 1.75rem);
+      font-weight: 800;
+      margin: 0 0 var(--space-2);
+      word-break: break-word;
+    }
+
+    .account-link {
+      margin: 0 0 var(--space-4);
+      color: var(--muted);
+      font-size: var(--text-sm);
+      word-break: break-all;
+    }
+
+    .notice {
+      margin-top: var(--space-4);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      display: none;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+    }
+
+    .notice.show { display: block; }
+    .notice.success { background: rgba(87,240,182,.12); color: #d8ffee; }
+    .notice.error { background: rgba(255,95,135,.12); color: #ffe3ea; }
+    .notice.info { background: rgba(66,217,255,.12); color: #daf8ff; }
+
+    .hidden { display: none !important; }
+
+    @media (min-width: 768px) {
+      .app { padding-top: var(--space-10); }
+      .hero { grid-template-columns: 280px 1fr; text-align: right; justify-items: stretch; align-items: center; }
+      .hero-content { display: grid; gap: var(--space-4); align-content: center; }
+      .logo-wrap { justify-self: center; width: 250px; }
+      .primary-btn { width: fit-content; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="logo-wrap">
+        <img src="./assets/zakisite.jpg" alt="Zakisite logo" width="1080" height="1080" loading="eager" />
+      </div>
+      <div class="hero-content">
+        <h1 class="brand-title">zakisite1</h1>
+        <p class="brand-sub">NFC Solutions</p>
+        <button class="primary-btn" id="startBtn">انقر للبرمجة</button>
+      </div>
+    </section>
+
+    <section class="panel" id="passwordPanel">
+      <h2 class="panel-title">أدخل الباسورد</h2>
+      <p class="panel-desc">لازم تدخل الباسورد الصحيح حتى تكمل البرمجة.</p>
+      <div class="field">
+        <label for="passwordInput">الباسورد</label>
+        <input class="input" id="passwordInput" type="password" placeholder="اكتب الباسورد" />
+      </div>
+      <div class="inline-actions">
+        <button class="action-btn save" id="passwordSubmit">دخول</button>
+      </div>
+      <div class="notice" id="passwordNotice"></div>
+    </section>
+
+    <section class="panel" id="formPanel">
+      <h2 class="panel-title">إعداد الحساب</h2>
+      <p class="panel-desc">اختار المنصة وحط اسم الحساب أو الرابط حسب الحاجة.</p>
+      <div class="field">
+        <label for="platformSelect">اختر المنصة</label>
+        <select class="select" id="platformSelect">
+          <option value="">-- اختر --</option>
+          <option value="facebook">Facebook</option>
+          <option value="instagram">Instagram</option>
+          <option value="linkedin">LinkedIn</option>
+          <option value="snapchat">Snapchat</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="phone">Phone</option>
+          <option value="url">URL</option>
+          <option value="location">Location</option>
+        </select>
+      </div>
+
+      <div class="field" id="accountFieldWrap">
+        <label for="accountInput" id="accountLabel">اسم الحساب</label>
+        <input class="input" id="accountInput" type="text" placeholder="اكتب اسم الحساب" />
+      </div>
+
+      <div class="inline-actions">
+        <button class="action-btn save" id="saveBtn">موافق</button>
+      </div>
+      <div class="notice" id="formNotice"></div>
+    </section>
+
+    <section class="account-card" id="accountCard">
+      <span class="account-chip" id="platformChip">Platform</span>
+      <p class="account-value" id="displayValue"></p>
+      <p class="account-link" id="displayLink"></p>
+      <div class="inline-actions">
+        <button class="action-btn" id="editBtn">تعديل الاسم</button>
+        <button class="action-btn delete" id="deleteBtn">حذف</button>
+        <button class="action-btn program" id="programBtn">برمجة</button>
+      </div>
+      <div class="notice" id="nfcNotice"></div>
+    </section>
+  </main>
+
+  <script>
+    const PASSWORD = '1807';
+    let savedAccount = null;
+
+    const els = {
+      startBtn: document.getElementById('startBtn'),
+      passwordPanel: document.getElementById('passwordPanel'),
+      formPanel: document.getElementById('formPanel'),
+      accountCard: document.getElementById('accountCard'),
+      passwordInput: document.getElementById('passwordInput'),
+      passwordSubmit: document.getElementById('passwordSubmit'),
+      passwordNotice: document.getElementById('passwordNotice'),
+      platformSelect: document.getElementById('platformSelect'),
+      accountInput: document.getElementById('accountInput'),
+      accountLabel: document.getElementById('accountLabel'),
+      accountFieldWrap: document.getElementById('accountFieldWrap'),
+      saveBtn: document.getElementById('saveBtn'),
+      formNotice: document.getElementById('formNotice'),
+      platformChip: document.getElementById('platformChip'),
+      displayValue: document.getElementById('displayValue'),
+      displayLink: document.getElementById('displayLink'),
+      editBtn: document.getElementById('editBtn'),
+      deleteBtn: document.getElementById('deleteBtn'),
+      programBtn: document.getElementById('programBtn'),
+      nfcNotice: document.getElementById('nfcNotice')
+    };
+
+    const platformMeta = {
+      facebook: { label: 'Facebook', placeholder: 'اسم حساب الفيسبوك أو الرابط', type: 'username' },
+      instagram: { label: 'Instagram', placeholder: 'اسم حساب الانستغرام أو الرابط', type: 'username' },
+      linkedin: { label: 'LinkedIn', placeholder: 'اسم حساب لينكدإن أو الرابط', type: 'username' },
+      snapchat: { label: 'Snapchat', placeholder: 'اسم حساب سناب شات أو الرابط', type: 'username' },
+      whatsapp: { label: 'WhatsApp', placeholder: 'رقم واتساب مثال 9627xxxxxxx', type: 'phone' },
+      phone: { label: 'Phone', placeholder: 'رقم الهاتف مثال +9627xxxxxxx', type: 'phone' },
+      url: { label: 'URL', placeholder: 'https://example.com', type: 'url' },
+      location: { label: 'Location', placeholder: 'رابط الموقع أو lat,lng', type: 'location' }
+    };
+
+    function showPanel(panel) {
+      [els.passwordPanel, els.formPanel].forEach(p => p.classList.remove('active'));
+      panel.classList.add('active');
+    }
+
+    function setNotice(target, message, type = 'info') {
+      target.textContent = message;
+      target.className = `notice show ${type}`;
+    }
+
+    function clearNotice(target) {
+      target.textContent = '';
+      target.className = 'notice';
+    }
+
+    function normalizeInput(value) {
+      return value.trim();
+    }
+
+    function buildLink(platform, value) {
+      const cleaned = normalizeInput(value);
+      if (!cleaned) return '';
+      if (cleaned.startsWith('http://') || cleaned.startsWith('https://') || cleaned.startsWith('tel:') || cleaned.startsWith('geo:')) return cleaned;
+
+      switch (platform) {
+        case 'facebook': return `https://facebook.com/${cleaned.replace(/^@/, '')}`;
+        case 'instagram': return `https://instagram.com/${cleaned.replace(/^@/, '')}`;
+        case 'linkedin': return cleaned.includes('linkedin.com/') ? `https://${cleaned.replace(/^https?:\/\//, '')}` : `https://linkedin.com/in/${cleaned.replace(/^@/, '')}`;
+        case 'snapchat': return `https://snapchat.com/add/${cleaned.replace(/^@/, '')}`;
+        case 'whatsapp': return `https://wa.me/${cleaned.replace(/\D/g, '')}`;
+        case 'phone': return `tel:${cleaned}`;
+        case 'url': return cleaned.startsWith('www.') ? `https://${cleaned}` : cleaned;
+        case 'location': return cleaned.includes(',') && !cleaned.startsWith('http') ? `geo:${cleaned}` : (cleaned.startsWith('http') ? cleaned : `https://maps.google.com/?q=${encodeURIComponent(cleaned)}`);
+        default: return cleaned;
+      }
+    }
+
+    function getDisplayValue(platform, value) {
+      return normalizeInput(value);
+    }
+
+    function updateFieldMeta() {
+      const key = els.platformSelect.value;
+      const meta = platformMeta[key];
+      if (!meta) {
+        els.accountLabel.textContent = 'اسم الحساب';
+        els.accountInput.placeholder = 'اكتب اسم الحساب';
+        return;
+      }
+      els.accountLabel.textContent = meta.label;
+      els.accountInput.placeholder = meta.placeholder;
+    }
+
+    function resetForm() {
+      els.platformSelect.value = '';
+      els.accountInput.value = '';
+      updateFieldMeta();
+      clearNotice(els.formNotice);
+      clearNotice(els.nfcNotice);
+    }
+
+    function renderSavedAccount() {
+      if (!savedAccount) {
+        els.accountCard.classList.remove('active');
+        return;
+      }
+      els.platformChip.textContent = platformMeta[savedAccount.platform].label;
+      els.displayValue.textContent = savedAccount.value;
+      els.displayLink.textContent = savedAccount.link;
+      els.accountCard.classList.add('active');
+    }
+
+    async function writeToNfc(link) {
+      if (!('NDEFReader' in window)) {
+        setNotice(els.nfcNotice, 'جهازك أو المتصفح لا يدعم Web NFC. استخدم Chrome على Android.', 'error');
+        return;
+      }
+      try {
+        setNotice(els.nfcNotice, 'قرب ال NFC من الجهاز الآن...', 'info');
+        const ndef = new NDEFReader();
+        await ndef.write({ records: [{ recordType: 'url', data: link }] });
+        setNotice(els.nfcNotice, 'تمت البرمجة بنجاح على الـ NFC.', 'success');
+      } catch (error) {
+        setNotice(els.nfcNotice, 'فشلت البرمجة أو تم إلغاء العملية.', 'error');
+      }
+    }
+
+    els.startBtn.addEventListener('click', () => {
+      showPanel(els.passwordPanel);
+      els.passwordInput.focus();
+    });
+
+    els.passwordSubmit.addEventListener('click', () => {
+      clearNotice(els.passwordNotice);
+      if (els.passwordInput.value !== PASSWORD) {
+        setNotice(els.passwordNotice, 'الباسورد غير صحيح.', 'error');
+        return;
+      }
+      showPanel(els.formPanel);
+      els.passwordInput.value = '';
+    });
+
+    els.platformSelect.addEventListener('change', updateFieldMeta);
+
+    els.saveBtn.addEventListener('click', () => {
+      clearNotice(els.formNotice);
+      const platform = els.platformSelect.value;
+      const rawValue = normalizeInput(els.accountInput.value);
+      if (!platform) {
+        setNotice(els.formNotice, 'اختر المنصة أولاً.', 'error');
+        return;
+      }
+      if (!rawValue) {
+        setNotice(els.formNotice, 'أدخل اسم الحساب أو القيمة المطلوبة.', 'error');
+        return;
+      }
+      savedAccount = {
+        platform,
+        value: getDisplayValue(platform, rawValue),
+        link: buildLink(platform, rawValue)
+      };
+      renderSavedAccount();
+      setNotice(els.formNotice, 'تم حفظ الحساب.', 'success');
+    });
+
+    els.deleteBtn.addEventListener('click', () => {
+      savedAccount = null;
+      els.accountCard.classList.remove('active');
+      resetForm();
+      showPanel(els.formPanel);
+      setNotice(els.formNotice, 'تم حذف الحساب، وكأنه ما انحط أي حساب.', 'info');
+    });
+
+    els.editBtn.addEventListener('click', () => {
+      if (!savedAccount) return;
+      showPanel(els.formPanel);
+      els.platformSelect.value = savedAccount.platform;
+      updateFieldMeta();
+      els.accountInput.value = savedAccount.value;
+      setNotice(els.formNotice, 'عدّل المنصة أو اليوزر ثم اضغط موافق.', 'info');
+    });
+
+    els.programBtn.addEventListener('click', async () => {
+      if (!savedAccount?.link) {
+        setNotice(els.nfcNotice, 'لا يوجد حساب جاهز للبرمجة.', 'error');
+        return;
+      }
+      await writeToNfc(savedAccount.link);
+    });
+
+    updateFieldMeta();
+  </script>
+</body>
+</html>
